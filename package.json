@@ -1,20 +1,42 @@
 {
-  "name": "zlogger",
+  "name": "@zerka/zlogger",
+  "type": "module",
   "version": "1.0.0",
   "description": "Customizable logger package.",
   "main": "index.js",
+  "module": "index.mjs",
+  "unpkg": "index.umd.js",
+  "types": "index.d.ts",
   "scripts": {
-    "generate": "node generatePrisma.js",
-    "test": "node test.ts"
-  },
-  "bin": {
-    "generate": "generatePrisma.js"
+    "test": "node test.ts",
+    "build": "rm -rf @zws && tsc --declaration"
   },
   "author": "Sebastian Pavel",
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^4.11.0",
     "chalk": "^5.2.0",
-    "prisma": "^4.11.0"
-  }
+    "microbundle": "^0.15.1",
+    "ora": "^6.3.0",
+    "pnpm": "^7.30.3",
+    "prisma": "^4.11.0",
+    "tsup": "^6.7.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/zerK4/zlogger.git"
+  },
+  "keywords": [
+    "logger",
+    "zlogger",
+    "prisma",
+    "logging"
+  ],
+  "bugs": {
+    "url": "https://github.com/zerK4/zlogger/issues"
+  },
+  "homepage": "https://github.com/zerK4/zlogger#readme"
 }

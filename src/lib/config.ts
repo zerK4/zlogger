@@ -14,4 +14,6 @@ model Log {
   timestamp DateTime
   message   String
 }
-`
+`;
+
+export default config;

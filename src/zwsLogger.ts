@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { appendFileSync } from 'fs';
-import createLogFile from './checkLocation';
-import { LogData } from './Interfaces';
+import { LogData, LoggerOptions } from './types/Interfaces.js';
+import createLogFile from './lib/checkLocation.js';
+import chalk from 'chalk';
 
 const NODE_ENV = process.env.NODE_ENV;
 
-export default class ZLogger {
+export default class zwsLogger {
   private options: {
     destination: 'db' | 'file' | 'console';
     location?: string;
@@ -18,8 +19,7 @@ export default class ZLogger {
  * @param options 
  * destination is file ? location = mandatory
  */
-
-  constructor(options: { destination: 'db' | 'file' | 'console', location?: string, shouldConsole?: boolean }) {
+  constructor(options: LoggerOptions) {
     this.prisma = new PrismaClient();
     this.options = options;
     if (this.options.destination === 'file' && !this.options.location) {
@@ -28,12 +28,6 @@ export default class ZLogger {
     this.options.shouldConsole = NODE_ENV === 'development' && options.shouldConsole ? true : false;
   }
   
-  /**
-   * @param message 
-   * @public info | error | warn
-   * ? Logging levels
-   */
-
   public info(message: string): void {
     this.logger('info', message);
   }
@@ -58,16 +52,21 @@ export default class ZLogger {
       message,
       timestamp: new Date(),
     };
-
+    const consoleMessage = console.log(chalk[level === 'warn' ? 'yellow' : level === 'error' ? 'red' : 'green'](logData.message + " | " + logData.level + " | " + logData.timestamp));
     /**
      * ? switch cases for logging destination
      */
     switch (destination) {
       case 'db':
-        await this.prisma.log.create({
-          data: logData
-        })
-        shouldConsole ? console.log(logData) : null;
+        try {
+          await this.prisma.log.create({
+            data: logData
+          })
+        } catch (err) {
+          console.log('\n')
+          console.error(chalk.bgYellow(`Prisma schema not initialized yet! \n`));
+        }
+        shouldConsole ? consoleMessage : null;
         break;
       case 'file':
         if (location) {
@@ -75,11 +74,11 @@ export default class ZLogger {
           createLogFile({location: location, level: level})
           const logString = `${JSON.stringify(logData)}\n`
           appendFileSync(logFilePath, logString, { flag: 'a+'})
-          shouldConsole ? console.log(logData) : null;
+          shouldConsole ? consoleMessage : null;
         }
         break;
       default: 
-        console.log(logData);
+        consoleMessage;
         break;
     }
   }

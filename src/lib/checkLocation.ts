@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { Data } from "../types/Interfaces.js";
 
-export const createLogFile = (data) => {
+export const createLogFile = (data: Data) => {
   const { location, level } = data;
 
   const logFilePath = `${location}/${level}.log`;

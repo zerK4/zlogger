@@ -1,4 +1,4 @@
-const config = `
+export const config = `
 datasource db {
   provider = "sqlite"
   url      = "file:dev.db"
@@ -15,5 +15,4 @@ model Log {
   message   String
 }
 `;
-
-module.exports = config;
+export default config;
